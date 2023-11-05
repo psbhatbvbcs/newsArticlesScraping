@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+from newspaper import Article
 
 
 class CommonModule:
@@ -26,11 +27,22 @@ class CommonModule:
                 meta_content = meta_tag["content"]
                 meta_properties[meta_property] = meta_content
 
+            # if "name" in meta_tag.attrs:
+            #     meta_property = meta_tag["name"]
+            #     if (meta_tag["content"]):
+            #         meta_content = meta_tag["content"]
+            #         meta_properties[meta_property] = meta_content
+            #     else:
+            #         meta_properties[meta_property] = ""
+
         required_tags = [
+            "og:site_name",
             "og:url",
             "og:title",
             "og:description",
             "article:published_time",
+            "og:keywords",
+            "keywords",
         ]
 
         # Find and remove meta tags that are not in the required_tags list
@@ -39,3 +51,19 @@ class CommonModule:
                 del meta_properties[meta_property]
 
         return meta_properties
+
+    def common_paper_scraper(self):
+        article = Article(self.url, language="en")  # en for English
+
+        # To download the article
+        article.download()
+
+        # To parse the article
+        article.parse()
+
+        # To extract text
+        print("Article's Text:")
+        print(article.text)
+        print("n")
+
+        return article.text
